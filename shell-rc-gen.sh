@@ -26,15 +26,16 @@ fi
 
 
 cat > $profile_file_path <<EOL 
+export GOROOT=$ENV/golang
 export GOPATH=${GOPATH}
-export PATH=\$PATH:{$GOROOT}/bin:\$GOPATH/bin
+export PATH=\$PATH:\$GOROOT/bin:\$GOPATH/bin
 export LANG=en_US.UTF-8
 ORG_GOPATH=\$GOPATH
 ORG_PATH=\$PATH
 
 function enable_proxy() {
-	export http_proxy=${http_proxy}
-	export https_proxy=${http_proxy}
+	export http_proxy=${HTTP_PROXY}
+	export https_proxy=${HTTP_PROXY}
 	curl myip.ipip.net
 }
 
@@ -80,7 +81,7 @@ EOL
 read -e -p "What is your default shell?: 1. bash, 2. zsh : " DEFAULT_SHELL
 
 shell_profile=~/.bash_profile
-if [ "2" == "DEFAULT_SHELL" ]; then
+if [ "2" == "$DEFAULT_SHELL" ]; then
     shell_profile=~/.zshrc
 fi
 
