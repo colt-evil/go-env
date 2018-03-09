@@ -48,8 +48,30 @@ cd php-$PHP_VERSION/
 make && make install
 
 mkdir $PHP_ROOT/etc/php.ini.d/
+mkdir $PHP_ROOT/etc/fpm.d/
+
 cp ./php.ini-development $PHP_ROOT/etc/php.ini
-cp $PHP_ROOT/etc/php-fpm.conf.default $PHP_ROOT/etc/php-fpm.conf
+
+cat > $PHP_ROOT/etc/php-fpm.conf <<EOL
+[global]
+error_log = log/php-fpm.log
+include=etc/fpm.d/*.conf
+daemonize = no
+EOL
+
+cat > $PHP_ROOT/etc/fpm.d/www.conf <<EOL
+[www]
+user = $USER
+group = $USER
+listen = 127.0.0.1:9000
+pm = dynamic
+pm.max_children = 50
+pm.start_servers = 2
+pm.min_spare_servers = 1
+pm.max_spare_servers = 3
+;rlimit_core = 0
+EOL
+
 
 
 cd $DOWNLOAD_BASE
@@ -90,6 +112,18 @@ $PHPIZE
 make && make install
 cat > $PHP_ROOT/etc/php.ini.d/xdebug.ini <<EOL
 zend_extension=$PHP_ROOT/lib/php/extensions/no-debug-non-zts-20131226/xdebug.so
+EOL
+
+if [ ! -f ./mongodb-1.4.2.tgz ]; then
+    wget https://pecl.php.net/get/mongodb-1.4.2.tgz -P $DOWNLOAD_BASE
+fi
+tar zxf mongodb-1.4.2.tgz
+cd mongodb-1.4.2
+$PHPIZE
+./configure --with-php-config=$PHP_CONFIG
+make && make install
+cat > $PHP_ROOT/etc/php.ini.d/xdebug.ini <<EOL
+extension=mongodb.so
 EOL
 
 
