@@ -16,4 +16,7 @@ if [ ! -d $GOROOT ]; then
     mkdir -p $GOROOT
 fi
 cp -r $SRC/go/* $GOROOT/
+if [ ! -d $GOPATH ]; then
+    mkdir -p $GOPATH
+fi
 go env
