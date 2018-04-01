@@ -15,35 +15,45 @@ if [ -f $ENV ]; then
     mkdir $ENV
 fi
 
-if [ -f $profile_file_path ]; then
-    read -e -p "profile file ${profile_file_path} extists. overwrite it? [y/n]: " -i "y" overwrite
-    if [ "n" == "$overwrite" ]; then
-        exit
-    fi
-else
-    touch "$profile_file_path"
+# custom env file folder
+CUSTOM_ENV=~/.custom_env
+
+if [ ! -d $CUSTOM_ENV ]; then
+	mkdir $CUSTOM_ENV
 fi
 
-
-cat > $profile_file_path <<EOL 
-export GOROOT=$ENV/golang
-export GOPATH=${GOPATH}
-export PATH=\$PATH:\$GOROOT/bin:\$GOPATH/bin
+# global settings
+cat <<EOL >$CUSTOM_ENV/001-global.sh
 export LANG=en_US.UTF-8
-ORG_GOPATH=\$GOPATH
-ORG_PATH=\$PATH
+export ENV=$ENV
+EOL
 
-function enable_proxy() {
+# proxy settings
+cat <<EOL >$CUSTOM_ENV/002-proxy.sh 
+function proxy_on() {
 	export http_proxy=${HTTP_PROXY}
 	export https_proxy=${HTTP_PROXY}
 	curl myip.ipip.net
 }
 
-function disable_proxy() {
+function proxy_status {
+	curl myip.ipip.net
+}
+
+function proxy_off() {
 	export http_proxy=
 	export https_proxy=
 	curl myip.ipip.net
 }
+EOL
+
+# golang functions
+cat <<EOL >$CUSTOM_ENV/003-golang.sh 
+export GOROOT=${GOROOT}
+export GOPATH=${GOPATH}
+export PATH=\$PATH:\$GOROOT/bin:\$GOPATH/bin
+ORG_GOPATH=\$GOPATH
+ORG_PATH=\$PATH
 
 function go_path_set() {
 	current_path=\$1
@@ -91,12 +101,16 @@ if [ "2" == "$DEFAULT_SHELL" ]; then
 fi
 
 
-grep -F "source $profile_file_path" $shell_profile > /dev/null
+grep -F "CUSTOM ENV AUTOLOAD" $shell_profile > /dev/null
 not_found=$?
 if [ $not_found -eq 1 ]; then
 cat >> $shell_profile <<EOL 
-	# custom profile
-	source $profile_file_path
+# CUSTOM ENV AUTOLOAD START
+function load_custom_env() {
+	for f in $CUSTOM_ENV/*; do source \$f; done
+}
+load_custom_env
+# CUSTOM ENV AUTOLOAD END
 EOL
 	echo "add load script to $shell_profile"
 else
