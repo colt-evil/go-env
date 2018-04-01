@@ -16,7 +16,7 @@ if [ -f $ENV ]; then
 fi
 
 if [ -f $profile_file_path ]; then
-    read -e -p "profile file ${profile_file_path} extists. overwrite it? [y/n]: " overwrite
+    read -e -p "profile file ${profile_file_path} extists. overwrite it? [y/n]: " -i "y" overwrite
     if [ "n" == "$overwrite" ]; then
         exit
     fi
@@ -50,7 +50,12 @@ function go_path_set() {
 	if [ -z "\$current_path" ]; then
 		current_path=\$(pwd)
 	fi
-	export GOPATH=\$current_path
+    read "add_global?Include Global GOPATH? [y/n]: " 
+    if [ "\$add_global" = "n" ]; then
+        export GOPATH=\$current_path
+    else
+        export GOPATH=\$GOPATH:\$current_path
+    fi
 	export PATH=\$PATH:\$GOPATH/bin
 	echo "Current GOPATH: \$GOPATH"
 }
@@ -97,4 +102,3 @@ EOL
 else
 	echo "load script already in $shell_profile, auto ignore"
 fi
-
