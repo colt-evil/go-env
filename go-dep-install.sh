@@ -27,3 +27,7 @@ go get -u github.com/derekparker/delve/cmd/dlv
 
 # Go Dep
 go get -u github.com/golang/dep/cmd/dep
+
+# grpc and protobuf
+go get -u google.golang.org/grpc
+go get -u github.com/golang/protobuf/protoc-gen-go

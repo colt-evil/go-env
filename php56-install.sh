@@ -1,6 +1,15 @@
 #!/bin/bash
+ENV_CONFIG=~/.custom_env/001-global.sh
+if [ ! -f $ENV_CONFIG ]; then
+    echo "custon env files not found. please run shell-rc-gen.sh to create them."
+    exit
+fi
+
+source $ENV_CONFIG
+
+
 PHP_VERSION=5.6.34
-PHP_ROOT=~/.local/php/$PHP_VERSION
+PHP_ROOT=$ENV/php/$PHP_VERSION
 PHPIZE=$PHP_ROOT/bin/phpize
 PHP_CONFIG=$PHP_ROOT/bin/php-config
 DOWNLOAD_BASE=~/Downloads
@@ -125,5 +134,3 @@ make && make install
 cat > $PHP_ROOT/etc/php.ini.d/xdebug.ini <<EOL
 extension=mongodb.so
 EOL
-
-

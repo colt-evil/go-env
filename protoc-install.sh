@@ -17,6 +17,7 @@ else
     if [ "\$reinstall" = "n" ]; then
         exit 0
     fi
+    rm -rf $INSTALL_PATH/*
 fi
 cd $INSTALL_PATH
 if [ ! -f protoc-$VERSION-linux-x86_64.zip ];then
