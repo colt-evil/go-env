@@ -9,6 +9,7 @@ gobin=$SRC/gobin.tar.gz
 if [ ! -f $gobin ]; then 
     wget http://mirrors.ustc.edu.cn/golang/go1.10.linux-amd64.tar.gz -O $SRC/gobin.tar.gz
 fi
+cd $SRC
 if [ ! -d $SRC/go ]; then
     tar zxf gobin.tar.gz -C $SRC
 fi
