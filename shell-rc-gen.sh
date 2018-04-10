@@ -93,6 +93,15 @@ function go_path_create() {
 }
 EOL
 
+cat <<EOL >$CUSTOM_ENV/004-func.sh 
+function rpass() {
+    length=$1
+    if [ -z "$length" ]; then
+        length=32
+    fi
+    < /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c${1:-$length};echo;`
+}
+
 read -e -p "What is your default shell?: 1. bash, 2. zsh : " DEFAULT_SHELL
 
 shell_profile=~/.bash_profile
