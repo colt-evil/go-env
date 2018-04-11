@@ -99,8 +99,9 @@ function rpass() {
     if [ -z "$length" ]; then
         length=32
     fi
-    < /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c${1:-$length};echo;`
+    < /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c${1:-$length};echo;
 }
+EOL
 
 read -e -p "What is your default shell?: 1. bash, 2. zsh : " DEFAULT_SHELL
 
